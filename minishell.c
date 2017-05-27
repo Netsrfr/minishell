@@ -110,18 +110,18 @@ void	ft_prompt()
 	wint_t key;
 
 	ft_printf("das_shell>>");
-	key = getwchar();
+	//key = getwchar();
 	//printf("\033[1A");
-	if(key == 27)
-	{
-		key = getwchar();
-		if(key == 91)
-		{
-			key = getwchar();
-			if (key == 65)
-				printf("UP ARROW");
-		}
-	}
+//	if(key == 27)
+//	{
+//		key = getwchar();
+//		if(key == 91)
+//		{
+//			key = getwchar();
+//			if (key == 65)
+//				printf("UP ARROW");
+//		}
+//	}
 	//if (key == 27)
 	//	printf("key = %d\n", key);
 	get_next_line(0, &line);
