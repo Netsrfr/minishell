@@ -17,6 +17,7 @@
 #include "libraries/get_next_line/get_next_line.h"
 #include <unistd.h>
 #include <stdio.h>
+#include <signal.h>
 
 typedef struct	s_path
 {
