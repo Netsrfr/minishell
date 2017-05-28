@@ -52,7 +52,7 @@ $(1SH): $(C_FILES) minishell.h
 	@gcc $(C_FLAGS) $(LIBLINK) $(SRCS) -o minishell
 
 test: fclean library
-	@gcc $(SRCS) $(LIBLINK) -o minishell
+	@gcc $(SRCS) -lncurses $(LIBLINK) -o minishell
 
 ftest: fclean library
 	@gcc $(SRCS) $(LIBLINK) -fsanitize=address -o minishell

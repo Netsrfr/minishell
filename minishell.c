@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 
+#include <ncurses.h>
 #include "minishell.h"
 
 int		ft_strcmd(char *line, char *cmd)
@@ -49,7 +50,7 @@ void	ft_echo(char *line)
 
 void	ft_signal(int sig)
 {
-	//printf("SIGNAL = %d\n", sig);
+	printf("SIGNAL = %d\n", sig);
 	if (sig == 2)
 	{
 		ft_printf("\nThank you for using the worlds most useless shell\n");
@@ -63,6 +64,29 @@ void	ft_clear(char *line)
 		ft_printf("\033[1J");
 }
 
+void	ft_unsetenv(char *line)
+{
+	char **name;
+
+	if (ft_strcmd(line, "unsetenv") == 0)
+	{
+		line = line + 9;
+		name = ft_strsplit(line, ' ');
+		while(*name)
+		{
+			printf("name = %s\n", *name);
+			if (ft_strchr(*name, '=') != 0)
+				ft_printf("error: unsetenv: '%s' invalid argument\n", *name);
+			else
+				unsetenv(*name);
+			free(*name);
+			name++;
+		}
+		//free(name);
+		ft_prompt();
+	}
+}
+
 void	ft_setenv(char *line)
 {
 	char **env;
@@ -71,7 +95,7 @@ void	ft_setenv(char *line)
 	i = 0;
 	if (ft_strcmd(line, "setenv") == 0)
 	{
-		line = line + 6;
+		line = line + 7;
 		env = ft_strsplit(line, '=');
 		while (env[i])
 			i++;
@@ -85,47 +109,51 @@ void	ft_setenv(char *line)
 			ft_printf("error: setenv: invalid argument\n");
 			exit(0);
 		}
-		setenv(env[0], env[1], 0);
+		while (*env)
+			free(*env);
+		free(env);
+		setenv(env[0], env[1], 1);
+		ft_prompt();
 	}
 }
 
 void	ft_getenv(char *line)
 {
-	char *name;
+	char	*name;
+	char	*env;
 
 	if (ft_strcmd(line, "getenv") == 0)
 	{
 		line = line + 7;
+		printf("line = %s\n", line);
 		name = ft_strdup(line);
 		if (ft_strchr(name, ' ') != 0)
 			ft_printf("error: getenv: too many arguments\n");
+		printf("name = %s\n", name);
+		env = getenv(name);
+		free(name);
+		ft_printf("%s\n", env);
+		ft_prompt();
 	}
 }
 
 void	ft_prompt()
 {
 	char	*line;
+	//extern char *environ;
 	pid_t	pid;
 	signal(SIGINT, ft_signal);
-	wint_t key;
 
 	ft_printf("das_shell>>");
-	//key = getwchar();
-	//printf("\033[1A");
-//	if(key == 27)
-//	{
-//		key = getwchar();
-//		if(key == 91)
-//		{
-//			key = getwchar();
-//			if (key == 65)
-//				printf("UP ARROW");
-//		}
-//	}
-	//if (key == 27)
-	//	printf("key = %d\n", key);
-	get_next_line(0, &line);
+	if(!(get_next_line(0, &line)))
+	{
+		ft_printf("\n");
+		ft_prompt();
+	}
 	ft_exit(line);
+	ft_setenv(line);
+	ft_getenv(line);
+	ft_unsetenv(line);
 	pid = fork();
 	if (pid > 0)
 	{
@@ -135,7 +163,6 @@ void	ft_prompt()
 	{
 		ft_echo(line);
 		ft_clear(line);
-		ft_setenv(line);
 		exit(0);
 	}
 	free(line);
@@ -148,17 +175,16 @@ int	main(int argc, char **argv, char **envp)
 //	pid_t test;
 	char *env;
 	char *cwd;
-
 	//env = getenv("PATH");
-	//signal(SIGINT, ft_signal);
+	signal(SIGINT, ft_signal);
 	char *line;
 	cwd = getcwd(cwd, PATH_MAX);
-	printf("cwd = %s\n", cwd);
 	//execve("/bin/lsth", &argv[0], NULL);
 	env = getenv("TESTENV");
-	printf("%s\n", env);
 
-	//ft_printf("\033[1J");
+	printf("\033[50H");
+	ft_printf("\033[1J");
+
 	ft_prompt();
 	return (0);
 }

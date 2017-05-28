@@ -26,5 +26,6 @@ typedef struct	s_path
 }				t_path;
 
 int	g_exit;
+void	ft_prompt();
 
 #endif
