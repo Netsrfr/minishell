@@ -24,7 +24,7 @@ SRCS = $(C_FILES)
 
 C_FLAGS = -Wall -Werror -Wextra
 
-.PHONY: all library libft printf gnl test clean fclean re
+.PHONY: all library libft printf gnl test testre clean fclean re
 
 all: library $(1SH)
 
@@ -51,7 +51,10 @@ $(GNL):
 $(1SH): $(C_FILES) minishell.h
 	@gcc $(C_FLAGS) $(LIBLINK) $(SRCS) -o minishell
 
-test: fclean library
+test: library
+	@gcc $(SRCS) -lncurses $(LIBLINK) -o minishell
+
+testre: fclean library
 	@gcc $(SRCS) -lncurses $(LIBLINK) -o minishell
 
 ftest: fclean library

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.c                                            :+:      :+:    :+:   */
+/*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpfeffer <jpfeffer@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,9 +10,13 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include <ncurses.h>
 #include "minishell.h"
+
+void		ft_print_error(char *error)
+{
+	ft_printf("das shell: error: %s\n", error);
+	exit(0);
+}
 
 int		ft_strcmd(char *line, char *cmd)
 {
@@ -61,7 +65,11 @@ void	ft_signal(int sig)
 void	ft_clear(char *line)
 {
 	if (ft_strcmd(line, "clear") == 0 || (ft_strcmd(line, "cls") == 0))
-		ft_printf("\033[1J");
+	{
+		ft_printf("\033[100H");
+		ft_printf("\033[2J");
+		exit(0);
+	}
 }
 
 void	ft_unsetenv(char *line)
@@ -137,10 +145,115 @@ void	ft_getenv(char *line)
 	}
 }
 
+char	*ft_add_path(char *argv0, char *argv1)
+{
+	char	*path;
+	char	*temp;
+
+
+		temp = ft_strjoin(argv0, "/");
+		path = ft_strjoin(temp, argv1);
+	free(temp);
+	return (path);
+}
+
+void	ft_exec(char *line)
+{
+	char	*cwd;
+	extern char **environ;
+	char	**argv;
+	char	*temp;
+	char	**path;
+	char	*ptr;
+
+	printf("TEST\n");
+
+	cwd = malloc(PATH_MAX);
+	getcwd(cwd, PATH_MAX);
+	argv = ft_strsplit(line, ' ');
+	if (line[0] == '/')
+	{
+		if(execve(argv[0], argv, environ) == -1)
+			ft_printf("das shell: error: command not found: %s\n", argv[0]);
+		exit(0);
+	}
+	else
+	{
+		temp = ft_add_path(cwd, argv[0]);
+			if (execve(temp, argv, environ) == -1)
+			{
+				free(temp);
+				while (*environ && ft_strncmp(*environ, "PATH=", 5) != 0)
+					environ++;
+				if (ft_strncmp(*environ, "PATH=", 5) == 0)
+				{
+					*environ = *environ + 6;
+					path = ft_strsplit(*environ, ':');
+				}
+				else
+				{
+					ft_printf("das shell: error: command not found: %s\n",
+							  argv[0]);
+					exit(0);
+				}
+				temp = ft_add_path(*path, argv[0]);
+				while (*path)
+				{
+					if (execve(temp, argv, environ) != -1)
+						exit(0);
+					free(temp);
+					path++;
+					if((!(*path)))
+					{
+						ft_printf("das shell: error: command not found: %s\n", argv[0]);
+						exit(0);
+					}
+					temp = ft_add_path(*path, argv[0]);
+				}
+			}
+		exit(0);
+	}
+//	unsetenv("PATH");
+//	setenv("PATH", "/test", 1);
+//	while (*environ)
+//	{
+//		printf("env1 = %s\n", *environ);
+//		environ++;
+//	}
+}
+
+void	ft_chdir(char *line)
+{
+	extern char **environ;
+	char		**path;
+
+	if (ft_strcmp(line, "cd") == 0)
+	{
+		while (*environ && ft_strncmp(*environ, "HOME=", 5) != 0)
+			environ++;
+		if (*environ && ft_strncmp(*environ, "HOME=", 5) == 0)
+		{
+			*environ = *environ + 6;
+			chdir(*environ);
+		}
+		else
+			ft_print_error("HOME not set path must be specified");
+		ft_prompt();
+
+	}
+	else if (ft_strncmp(line, "cd ", 3) == 0)
+	{
+		line = line + 4;
+		chdir(line);
+		ft_prompt();
+
+	}
+}
+
+
 void	ft_prompt()
 {
 	char	*line;
-	//extern char *environ;
 	pid_t	pid;
 	signal(SIGINT, ft_signal);
 
@@ -154,6 +267,7 @@ void	ft_prompt()
 	ft_setenv(line);
 	ft_getenv(line);
 	ft_unsetenv(line);
+	ft_chdir(line);
 	pid = fork();
 	if (pid > 0)
 	{
@@ -163,6 +277,7 @@ void	ft_prompt()
 	{
 		ft_echo(line);
 		ft_clear(line);
+		ft_exec(line);
 		exit(0);
 	}
 	free(line);
@@ -171,6 +286,9 @@ void	ft_prompt()
 }
 int	main(int argc, char **argv, char **envp)
 {
+	extern char **environ;
+
+
 //	t_path path;
 //	pid_t test;
 	char *env;
@@ -182,9 +300,9 @@ int	main(int argc, char **argv, char **envp)
 	//execve("/bin/lsth", &argv[0], NULL);
 	env = getenv("TESTENV");
 
-	printf("\033[50H");
-	ft_printf("\033[1J");
 
+	//printf("\033[100B");
+	ft_printf("\033[100H");
+	ft_printf("\033[2J");
 	ft_prompt();
-	return (0);
 }
