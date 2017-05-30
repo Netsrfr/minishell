@@ -110,12 +110,14 @@ void	ft_setenv(char *line)
 		if (i == 0)
 		{
 			ft_printf("error: setenv: no argument\n");
-			exit(0);
+			free(env);
+			ft_prompt();
 		}
 		else if (i != 2)
 		{
 			ft_printf("error: setenv: invalid argument\n");
-			exit(0);
+			free(env);
+			ft_prompt();
 		}
 		while (*env)
 			free(*env);
@@ -165,8 +167,6 @@ void	ft_exec(char *line)
 	char	*temp;
 	char	**path;
 	char	*ptr;
-
-	printf("TEST\n");
 
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
@@ -222,34 +222,123 @@ void	ft_exec(char *line)
 //	}
 }
 
-void	ft_chdir(char *line)
+char	**ft_environ()
 {
 	extern char **environ;
-	char		**path;
+	char **env;
+	int i;
+
+	i = 0;
+	while(environ[i])
+		i++;
+	env = ft_memalloc(sizeof(char*) * (i + 1));
+	i = 0;
+	while (environ[i])
+	{
+		env[i] = ft_strdup(environ[i]);
+		i++;
+	}
+	return (env);
+}
+
+void	ft_free_environ(char** env)
+{
+	char **ptr;
+
+	ptr = env;
+	while (*env)
+	{
+		printf("free| %s\n", *env);
+		free(*env);
+		env++;
+	}
+	free(ptr);
+}
+
+void	ft_chdir(char *line)
+{
+	char		**env;
+	char		***ptr;
 
 	if (ft_strcmp(line, "cd") == 0)
 	{
-		while (*environ && ft_strncmp(*environ, "HOME=", 5) != 0)
-			environ++;
-		if (*environ && ft_strncmp(*environ, "HOME=", 5) == 0)
-		{
-			*environ = *environ + 6;
-			chdir(*environ);
-		}
+		ptr = ft_memalloc(sizeof(char**));
+		env = ft_environ();
+		*ptr = env;
+		while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
+			env++;
+		if (*env && ft_strncmp(*env, "HOME=", 5) == 0)
+			chdir(&(*env)[5]);
 		else
 			ft_print_error("HOME not set path must be specified");
+		ft_free_environ(*ptr);
+		free(ptr);
+		free(line);
 		ft_prompt();
-
 	}
 	else if (ft_strncmp(line, "cd ", 3) == 0)
 	{
-		line = line + 4;
-		chdir(line);
+		chdir(&line[3]);
+		free(line);
 		ft_prompt();
-
 	}
 }
 
+void	ft_print()
+{
+	extern char **environ;
+
+	int i = 0;
+	while(environ[i])
+		ft_printf("%s\n", environ[i++]);
+	printf("\n\n");
+}
+
+void	ft_env_child(char *line)
+{
+	extern char **environ;
+	char **args;
+	char **temp;
+
+	if (ft_strncmp(line, "env ", 4) == 0)
+	{
+		args = ft_strsplit(line, ' ');
+		while (*args && ft_strchr(*args, '=') != 0)
+		{
+			temp = ft_strsplit(*args, '=');
+			if(temp[2])
+			{
+				ft_printf("das shell: error: env: invalid argument: %s", *args);
+				exit(0);
+			}
+			else
+				setenv(temp[0], temp[1], 1);
+		}
+		printf("line = %s\n", line);
+		line = ft_strrchr(line, '=');
+		printf("line = %s\n", line);
+
+		while(*line && *line != ' ')
+			line++;
+		if (*line == ' ')
+			line++;
+		else
+			while (*environ && ft_printf("%s\n", *environ++));
+	}
+	printf("LINE = %s\n", line);
+}
+
+void	ft_env(char *line)
+{
+	extern char **environ;
+
+	if (ft_strcmp(line, "env") == 0)
+	{
+		while (*environ && ft_printf("%s\n", *environ++));
+		free(line);
+		ft_prompt();
+	}
+}
 
 void	ft_prompt()
 {
@@ -264,6 +353,7 @@ void	ft_prompt()
 		ft_prompt();
 	}
 	ft_exit(line);
+	ft_env(line);
 	ft_setenv(line);
 	ft_getenv(line);
 	ft_unsetenv(line);
@@ -275,6 +365,8 @@ void	ft_prompt()
 	}
 	else if (pid == 0)
 	{
+		ft_env_child(line);
+		ft_print();
 		ft_echo(line);
 		ft_clear(line);
 		ft_exec(line);
@@ -288,9 +380,6 @@ int	main(int argc, char **argv, char **envp)
 {
 	extern char **environ;
 
-
-//	t_path path;
-//	pid_t test;
 	char *env;
 	char *cwd;
 	//env = getenv("PATH");
