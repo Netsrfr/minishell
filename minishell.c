@@ -302,7 +302,13 @@ void	ft_env_child(char *line)
 
 	if (ft_strncmp(line, "env ", 4) == 0)
 	{
-		args = ft_strsplit(line, ' ');
+		args = ft_strsplit(&line[4], ' ');
+		if(!(*args))
+		{
+			while (*environ && ft_printf("%s\n", *environ++));
+			exit(0);
+		}
+		while (*args && ft_printf("ARGS = %s\n", *args++));
 		while (*args && ft_strchr(*args, '=') != 0)
 		{
 			temp = ft_strsplit(*args, '=');
@@ -320,10 +326,9 @@ void	ft_env_child(char *line)
 
 		while(*line && *line != ' ')
 			line++;
-		if (*line == ' ')
-			line++;
-		else
+		if (*line != ' ')
 			while (*environ && ft_printf("%s\n", *environ++));
+		ft_exec(line);
 	}
 	printf("LINE = %s\n", line);
 }
@@ -366,6 +371,7 @@ void	ft_prompt()
 	else if (pid == 0)
 	{
 		ft_env_child(line);
+		printf("LINE = %s\n", line);
 		ft_print();
 		ft_echo(line);
 		ft_clear(line);
