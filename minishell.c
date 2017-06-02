@@ -49,6 +49,7 @@ void	ft_echo(char *line)
 		line = line + 5;
 		ft_printf("%s\n", line);
 		free(ptr);
+		exit(0);
 	}
 }
 
@@ -135,11 +136,11 @@ void	ft_getenv(char *line)
 	if (ft_strcmd(line, "getenv") == 0)
 	{
 		line = line + 7;
-		printf("line = %s\n", line);
+//		printf("line = %s\n", line);
 		name = ft_strdup(line);
 		if (ft_strchr(name, ' ') != 0)
 			ft_printf("error: getenv: too many arguments\n");
-		printf("name = %s\n", name);
+//		printf("name = %s\n", name);
 		env = getenv(name);
 		free(name);
 		ft_printf("%s\n", env);
@@ -161,13 +162,16 @@ char	*ft_add_path(char *argv0, char *argv1)
 
 void	ft_exec(char *line)
 {
+	printf("TEST_EXEC\n");
 	char	*cwd;
 	extern char **environ;
 	char	**argv;
 	char	*temp;
 	char	**path;
 	char	*ptr;
-
+	printf("line0 = %c\n", line[0]);
+	printf("EXEC_LINE = %s\n", line);
+	ft_print();
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
 	argv = ft_strsplit(line, ' ');
@@ -248,7 +252,7 @@ void	ft_free_environ(char** env)
 	ptr = env;
 	while (*env)
 	{
-		printf("free| %s\n", *env);
+//		printf("free| %s\n", *env);
 		free(*env);
 		env++;
 	}
@@ -291,7 +295,7 @@ void	ft_print()
 	int i = 0;
 	while(environ[i])
 		ft_printf("%s\n", environ[i++]);
-	printf("\n\n");
+	exit(0);
 }
 
 void	ft_env_child(char *line)
@@ -304,43 +308,43 @@ void	ft_env_child(char *line)
 	{
 		args = ft_strsplit(&line[4], ' ');
 		if(!(*args))
-		{
-			while (*environ && ft_printf("%s\n", *environ++));
-			exit(0);
-		}
-		while (*args && ft_printf("ARGS = %s\n", *args++));
+			ft_print();
 		while (*args && ft_strchr(*args, '=') != 0)
 		{
 			temp = ft_strsplit(*args, '=');
 			if(temp[2])
 			{
-				ft_printf("das shell: error: env: invalid argument: %s", *args);
+				ft_printf("das shell: error: env: invalid argument: %s\n", *args);
 				exit(0);
 			}
 			else
 				setenv(temp[0], temp[1], 1);
+			args++;
 		}
-		printf("line = %s\n", line);
 		line = ft_strrchr(line, '=');
-		printf("line = %s\n", line);
-
 		while(*line && *line != ' ')
 			line++;
 		if (*line != ' ')
-			while (*environ && ft_printf("%s\n", *environ++));
+			ft_print();
+		else
+			line++;
 		ft_exec(line);
 	}
-	printf("LINE = %s\n", line);
 }
 
 void	ft_env(char *line)
 {
 	extern char **environ;
+	char		***ptr;
 
 	if (ft_strcmp(line, "env") == 0)
 	{
+		ptr = ft_memalloc(sizeof(char**));
+		*ptr = environ;
 		while (*environ && ft_printf("%s\n", *environ++));
 		free(line);
+		environ = *ptr;
+		free(ptr);
 		ft_prompt();
 	}
 }
@@ -371,8 +375,8 @@ void	ft_prompt()
 	else if (pid == 0)
 	{
 		ft_env_child(line);
-		printf("LINE = %s\n", line);
-		ft_print();
+//		printf("LINE = %s\n", line);
+//		ft_print();
 		ft_echo(line);
 		ft_clear(line);
 		ft_exec(line);
