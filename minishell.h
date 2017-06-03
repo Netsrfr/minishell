@@ -25,6 +25,29 @@ typedef struct	s_path
 	int		size;
 }				t_path;
 
+/*
+** persist.c
+*/
+void	ft_unsetenv(char *line);
+void	ft_setenv(char *line);
+void	ft_chdir(char *line);
+void	ft_exit(char *line);
+void	ft_env(char *line);
+
+/*
+** utility.c
+*/
+char	*ft_add_path(char *argv0, char *argv1);
+int		ft_strcmd(char *line, char *cmd);
+void	ft_print_error(char *error);
+void	ft_signal(int sig);
+void	ft_print();
+
+
+void	ft_free_environ(char** env);
+char	**ft_environ();
+
+
 int	g_exit;
 void	ft_prompt();
 void	ft_print();
