@@ -29,6 +29,7 @@ int		ft_strcmd(char *line, char *cmd)
 		free(temp);
 		return (0);
 	}
+	free(temp);
 	return (1);
 }
 
@@ -136,11 +137,9 @@ void	ft_getenv(char *line)
 	if (ft_strcmd(line, "getenv") == 0)
 	{
 		line = line + 7;
-//		printf("line = %s\n", line);
 		name = ft_strdup(line);
 		if (ft_strchr(name, ' ') != 0)
 			ft_printf("error: getenv: too many arguments\n");
-//		printf("name = %s\n", name);
 		env = getenv(name);
 		free(name);
 		ft_printf("%s\n", env);
@@ -162,16 +161,12 @@ char	*ft_add_path(char *argv0, char *argv1)
 
 void	ft_exec(char *line)
 {
-	printf("TEST_EXEC\n");
 	char	*cwd;
 	extern char **environ;
 	char	**argv;
 	char	*temp;
 	char	**path;
-	char	*ptr;
-	printf("line0 = %c\n", line[0]);
-	printf("EXEC_LINE = %s\n", line);
-	ft_print();
+
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
 	argv = ft_strsplit(line, ' ');
