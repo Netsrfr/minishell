@@ -26,6 +26,19 @@ typedef struct	s_path
 }				t_path;
 
 /*
+** environ.c
+*/
+void	ft_free_environ(char** env);
+void	ft_env_child(char *line);
+char	**ft_environ();
+
+/*
+** exec.c
+*/
+void	ft_exec(char *line);
+
+
+/*
 ** persist.c
 */
 void	ft_unsetenv(char *line);
@@ -39,7 +52,7 @@ void	ft_env(char *line);
 */
 char	*ft_add_path(char *argv0, char *argv1);
 int		ft_strcmd(char *line, char *cmd);
-void	ft_print_error(char *error);
+void	ft_print_error(char *error, char *arg);
 void	ft_signal(int sig);
 void	ft_print();
 

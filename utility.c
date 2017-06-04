@@ -27,9 +27,9 @@ int		ft_strcmd(char *line, char *cmd)
 	return (1);
 }
 
-void		ft_print_error(char *error)
+void		ft_print_error(char *error, char *arg)
 {
-	ft_printf("das shell: error: %s\n", error);
+	ft_printf("das shell: error: %s %s\n", error, arg);
 	exit(0);
 }
 

@@ -66,6 +66,8 @@ void	ft_setenv(char *line)
 	}
 }
 
+//TODO: Setup PWD '-'
+
 void	ft_chdir(char *line)
 {
 	char		**env;
@@ -81,7 +83,7 @@ void	ft_chdir(char *line)
 		if (*env && ft_strncmp(*env, "HOME=", 5) == 0)
 			chdir(&(*env)[5]);
 		else
-			ft_print_error("HOME not set path must be specified");
+			ft_print_error("HOME not set path must be specified", "");
 		ft_free_environ(*ptr);
 		free(ptr);
 		free(line);

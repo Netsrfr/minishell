@@ -12,37 +12,7 @@
 
 #include "minishell.h"
 
-char	**ft_environ()
-{
-	extern char **environ;
-	char **env;
-	int i;
 
-	i = 0;
-	while(environ[i])
-		i++;
-	env = ft_memalloc(sizeof(char*) * (i + 1));
-	i = 0;
-	while (environ[i])
-	{
-		env[i] = ft_strdup(environ[i]);
-		i++;
-	}
-	return (env);
-}
-
-void	ft_free_environ(char** env)
-{
-	char **ptr;
-
-	ptr = env;
-	while (*env)
-	{
-		free(*env);
-		env++;
-	}
-	free(ptr);
-}
 
 void	ft_echo(char *line)
 {
@@ -86,102 +56,22 @@ void	ft_getenv(char *line)
 	}
 }
 
-void	ft_exec(char *line)
+void	ft_preprocessor(char *line)
 {
-	char		*cwd;
-	extern char **environ;
-	char			**argv;
-	char	*temp;
-	char	**path;
-
-	cwd = malloc(PATH_MAX);
-	getcwd(cwd, PATH_MAX);
-	argv = ft_strsplit(line, ' ');
-	if (line[0] == '/')
-	{
-		if(execve(argv[0], argv, environ) == -1)
-			ft_printf("das shell: error: command not found: %s\n", argv[0]);
-		exit(0);
-	}
-	else
-	{
-		temp = ft_add_path(cwd, argv[0]);
-			if (execve(temp, argv, environ) == -1)
-			{
-				free(temp);
-				while (*environ && ft_strncmp(*environ, "PATH=", 5) != 0)
-					environ++;
-				if (ft_strncmp(*environ, "PATH=", 5) == 0)
-				{
-					*environ = *environ + 6;
-					path = ft_strsplit(*environ, ':');
-				}
-				else
-				{
-					ft_printf("das shell: error: command not found: %s\n",
-							  argv[0]);
-					exit(0);
-				}
-				temp = ft_add_path(*path, argv[0]);
-				while (*path)
-				{
-					if (execve(temp, argv, environ) != -1)
-						exit(0);
-					free(temp);
-					path++;
-					if((!(*path)))
-					{
-						ft_printf("das shell: error: command not found: %s\n", argv[0]);
-						exit(0);
-					}
-					temp = ft_add_path(*path, argv[0]);
-				}
-			}
-		exit(0);
-	}
-//	unsetenv("PATH");
-//	setenv("PATH", "/test", 1);
-//	while (*environ)
-//	{
-//		printf("env1 = %s\n", *environ);
-//		environ++;
-//	}
+	ft_exit(line);
+	ft_env(line);
+	ft_setenv(line);
+	ft_getenv(line);
+	ft_unsetenv(line);
+	ft_chdir(line);
 }
 
-
-
-void	ft_env_child(char *line)
+void	ft_built_ins(char *line)
 {
-	extern char **environ;
-	char **args;
-	char **temp;
-
-	if (ft_strncmp(line, "env ", 4) == 0)
-	{
-		args = ft_strsplit(&line[4], ' ');
-		if(!(*args))
-			ft_print();
-		while (*args && ft_strchr(*args, '=') != 0)
-		{
-			temp = ft_strsplit(*args, '=');
-			if(temp[2])
-			{
-				ft_printf("das shell: error: env: invalid argument: %s\n", *args);
-				exit(0);
-			}
-			else
-				setenv(temp[0], temp[1], 1);
-			args++;
-		}
-		line = ft_strrchr(line, '=');
-		while(*line && *line != ' ')
-			line++;
-		if (*line != ' ')
-			ft_print();
-		else
-			line++;
-		ft_env_child(line);
-	}
+	ft_env_child(line);
+	ft_echo(line);
+	ft_clear(line);
+	ft_exec(line);
 }
 
 void	ft_prompt()
@@ -196,44 +86,22 @@ void	ft_prompt()
 		ft_printf("\n");
 		ft_prompt();
 	}
-	ft_exit(line);
-	ft_env(line);
-	ft_setenv(line);
-	ft_getenv(line);
-	ft_unsetenv(line);
-	ft_chdir(line);
+	ft_preprocessor(line);
 	pid = fork();
 	if (pid > 0)
-	{
 		wait(&pid);
-	}
 	else if (pid == 0)
 	{
-		ft_env_child(line);
-		ft_echo(line);
-		ft_clear(line);
-		ft_exec(line);
+		ft_built_ins(line);
 		exit(0);
 	}
 	free(line);
 	ft_prompt();
-
 }
+
 int	main(int argc, char **argv, char **envp)
 {
-	extern char **environ;
-
-	char *env;
-	char *cwd;
-	//env = getenv("PATH");
 	signal(SIGINT, ft_signal);
-	char *line;
-	cwd = getcwd(cwd, PATH_MAX);
-	//execve("/bin/lsth", &argv[0], NULL);
-	env = getenv("TESTENV");
-
-
-	//printf("\033[100B");
 	ft_printf("\033[100H");
 	ft_printf("\033[2J");
 	ft_prompt();

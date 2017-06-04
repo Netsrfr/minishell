@@ -84,5 +84,5 @@ set(SOURCE_FILES minishell.c minishell.h
         libraries/ft_printf/ft_printf.h
         libraries/ft_printf/ft_putwidth.c
         libraries/get_next_line/get_next_line.c
-        libraries/get_next_line/get_next_line.h persist.c utility.c)
+        libraries/get_next_line/get_next_line.h persist.c utility.c environ.c exec.c)
 add_executable(minishell ${SOURCE_FILES})
