@@ -68,6 +68,26 @@ void	ft_setenv(char *line)
 
 //TODO: Setup PWD '-'
 
+void	ft_path_home_cd(char *line)
+{
+	char		**env;
+	char		***ptr;
+
+	ptr = ft_memalloc(sizeof(char**));
+	env = ft_environ();
+	*ptr = env;
+	while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
+		env++;
+	if (*env && ft_strncmp(*env, "HOME=", 5) == 0)
+		chdir(&(*env)[5]);
+	else
+		ft_print_error("HOME not set path must be specified", "");
+	ft_free_environ(*ptr);
+	free(ptr);
+	free(line);
+	ft_prompt();
+}
+
 void	ft_chdir(char *line)
 {
 	char		**env;
@@ -75,19 +95,20 @@ void	ft_chdir(char *line)
 
 	if (ft_strcmp(line, "cd") == 0)
 	{
-		ptr = ft_memalloc(sizeof(char**));
-		env = ft_environ();
-		*ptr = env;
-		while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
-			env++;
-		if (*env && ft_strncmp(*env, "HOME=", 5) == 0)
-			chdir(&(*env)[5]);
-		else
-			ft_print_error("HOME not set path must be specified", "");
-		ft_free_environ(*ptr);
-		free(ptr);
-		free(line);
-		ft_prompt();
+		ft_path_home_cd(line);
+//		ptr = ft_memalloc(sizeof(char**));
+//		env = ft_environ();
+//		*ptr = env;
+//		while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
+//			env++;
+//		if (*env && ft_strncmp(*env, "HOME=", 5) == 0)
+//			chdir(&(*env)[5]);
+//		else
+//			ft_print_error("HOME not set path must be specified", "");
+//		ft_free_environ(*ptr);
+//		free(ptr);
+//		free(line);
+//		ft_prompt();
 	}
 	else if (ft_strncmp(line, "cd ", 3) == 0)
 	{

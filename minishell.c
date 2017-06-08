@@ -56,6 +56,83 @@ void	ft_getenv(char *line)
 	}
 }
 
+char	*ft_path_home(char *line)
+{
+	char	**env;
+	char	***ptr;
+	char	*home;
+
+	ptr = ft_memalloc(sizeof(char **));
+	env = ft_environ();
+	*ptr = env;
+	printf("TEST1\n");
+	while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
+		env++;
+	if ((!*env) || ft_strncmp(*env, "HOME=", 5) != 0)
+	{
+		ft_printf("HOME not set path must be specified\n");
+		free(line);
+		ft_prompt();
+	}
+	home = ft_strdup(&(*env)[5]);
+	ft_free_environ(*ptr);
+	free(ptr);
+	return(home);
+}
+
+char	*ft_insert_home(char *line, char *home, char *temp)
+{
+	int		i;
+	int		j;
+	int		k;
+
+	i = 0;
+	j = 0;
+	while (line[i])
+	{
+		if (line[i] == '~')
+		{
+			k = 0;
+			while (home[k])
+				temp[j++] = home[k++];
+			j--;
+		}
+		else
+			temp[j] = line[i];
+		j++;
+		i++;
+	}
+	free(home);
+	free(line);
+	line = ft_strdup(temp);
+	free(temp);
+	return(line);
+}
+
+char	*ft_home(char *line)
+{
+	char	*temp;
+	char	*home;
+	int			i;
+	int			count;
+
+	if (ft_strchr(line, '~') != 0)
+	{
+		i = 0;
+		count = 0;
+		home = ft_path_home(line);
+		while (line[i])
+		{
+			if (line[i] == '~')
+				count++;
+			i++;
+		}
+		temp = ft_memalloc(sizeof(char) * (count * ft_strlen(home) + ft_strlen(line)));
+		line = ft_insert_home(line, home, temp);
+	}
+	return (line);
+}
+
 void	ft_preprocessor(char *line)
 {
 	ft_exit(line);
@@ -86,6 +163,7 @@ void	ft_prompt()
 		ft_printf("\n");
 		ft_prompt();
 	}
+	line = ft_home(line);
 	ft_preprocessor(line);
 	pid = fork();
 	if (pid > 0)
