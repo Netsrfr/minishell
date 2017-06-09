@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utility.c                                            :+:      :+:    :+:   */
+/*   utility.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpfeffer <jpfeffer@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -15,6 +15,7 @@
 int		ft_strcmd(char *line, char *cmd)
 {
 	char *temp;
+
 	if (ft_strcmp(line, cmd) == 0)
 		return (0);
 	temp = ft_strjoin(cmd, " ");
@@ -27,7 +28,7 @@ int		ft_strcmd(char *line, char *cmd)
 	return (1);
 }
 
-void		ft_print_error(char *error, char *arg)
+void	ft_print_error(char *error, char *arg)
 {
 	ft_printf("das shell: error: %s %s\n", error, arg);
 	exit(0);
@@ -38,7 +39,6 @@ char	*ft_add_path(char *argv0, char *argv1)
 	char	*path;
 	char	*temp;
 
-
 	temp = ft_strjoin(argv0, "/");
 	path = ft_strjoin(temp, argv1);
 	free(temp);
@@ -47,20 +47,26 @@ char	*ft_add_path(char *argv0, char *argv1)
 
 void	ft_signal(int sig)
 {
-	printf("SIGNAL = %d\n", sig);
 	if (sig == 2)
 	{
-		ft_printf("\nThank you for using the worlds most useless shell\n");
-		exit(0);
+		if (g_pid == 0)
+			ft_printf("\ndas_shell>>");
+		else
+		{
+			ft_printf("\n");
+			kill(g_pid, SIGTERM);
+			g_pid = 0;
+		}
 	}
 }
 
-void	ft_print()
+void	ft_print(void)
 {
-	extern char **environ;
+	extern char	**environ;
+	int			i;
 
-	int i = 0;
-	while(environ[i])
+	i = 0;
+	while (environ[i])
 		ft_printf("%s\n", environ[i++]);
 	exit(0);
 }

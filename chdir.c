@@ -45,7 +45,7 @@ static void	ft_chdir_home(char *line)
 	ft_prompt();
 }
 
-static char	*ft_oldpwd()
+static char	*ft_oldpwd(void)
 {
 	char	***ptr;
 	char	**env;
@@ -99,8 +99,8 @@ void		ft_chdir(char *line)
 			cwd = ft_memalloc(PATH_MAX);
 			cwd = getcwd(cwd, PATH_MAX);
 			args = ft_strsplit(&line[3], ' ');
-				if (args[1])
-					ft_printf("das_shell: cd: too many arguments\n");
+			if (args[1])
+				ft_printf("das_shell: cd: too many arguments\n");
 			else if (chdir(args[0]) != -1)
 				ft_set_pwd(cwd);
 			while (*args)

@@ -26,7 +26,7 @@ void	ft_unsetenv(char *line)
 	{
 		line = line + 9;
 		name = ft_strsplit(line, ' ');
-		while(*name)
+		while (*name)
 		{
 			if (ft_strchr(*name, '=') != 0)
 				ft_printf("error: unsetenv: '%s' invalid argument\n", *name);
@@ -41,8 +41,8 @@ void	ft_unsetenv(char *line)
 
 void	ft_setenv(char *line)
 {
-	char **env;
-	int i;
+	char	**env;
+	int		i;
 
 	i = 0;
 	if (ft_strcmd(line, "setenv") == 0)
@@ -74,7 +74,8 @@ void	ft_env(char *line)
 	{
 		ptr = ft_memalloc(sizeof(char**));
 		*ptr = environ;
-		while (*environ && ft_printf("%s\n", *environ++));
+		while (*environ)
+			ft_printf("%s\n", *environ++);
 		free(line);
 		environ = *ptr;
 		free(ptr);

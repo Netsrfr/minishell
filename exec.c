@@ -33,7 +33,7 @@ void	ft_exec_path(char **argv, char **environ, char *cwd)
 				exit(0);
 			free(temp);
 			path++;
-			if((!(*path)))
+			if ((!(*path)))
 				ft_print_error("command not found:", argv[0]);
 			temp = ft_add_path(*path, argv[0]);
 		}
@@ -44,8 +44,8 @@ void	ft_exec_path(char **argv, char **environ, char *cwd)
 void	ft_exec(char *line)
 {
 	char		*cwd;
-	extern char **environ;
-	char			**argv;
+	extern char	**environ;
+	char		**argv;
 
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
