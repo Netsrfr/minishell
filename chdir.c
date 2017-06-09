@@ -78,9 +78,9 @@ static void	ft_chdir_oldpwd(char *line)
 		free(cwd);
 	}
 	else if (ft_strncmp(line, "- ", 2) == 0)
-		ft_printf("das_shell: cd: string not in pwd\n");
+		ft_printe("das_shell: cd: string not in pwd\n");
 	else
-		ft_printf("das_shell: cd: no such file or directory: %s", line);
+		ft_printe("das_shell: cd: no such file or directory: %s", line);
 }
 
 void		ft_chdir(char *line)
@@ -100,9 +100,11 @@ void		ft_chdir(char *line)
 			cwd = getcwd(cwd, PATH_MAX);
 			args = ft_strsplit(&line[3], ' ');
 			if (args[1])
-				ft_printf("das_shell: cd: too many arguments\n");
+				ft_printe("das_shell: cd: too many arguments\n");
 			else if (chdir(args[0]) != -1)
 				ft_set_pwd(cwd);
+			else
+				ft_print_error("cd: no such file or directory:", args[0]);
 			while (*args)
 				free(*args++);
 			free(cwd);

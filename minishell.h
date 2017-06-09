@@ -14,10 +14,12 @@
 # define MINISHELL_H
 # include "libft/libft.h"
 # include "libraries/ft_printf/ft_printf.h"
+# include "libraries/ft_printe/ft_printe.h"
 # include "libraries/get_next_line/get_next_line.h"
 # include <unistd.h>
 # include <stdio.h>
 # include <signal.h>
+# define CE ("\x1b[31merror:\x1b[39m")
 
 /*
 ** chdir.c

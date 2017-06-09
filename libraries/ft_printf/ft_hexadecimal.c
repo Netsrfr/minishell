@@ -43,7 +43,7 @@ int		ft_conversion_x(uintmax_t argument, char conversion)
 	if (conversion == 'x')
 		while (result[i])
 		{
-			result[i] = ft_tolower(result[i]);
+			result[i] = (char)ft_tolower(result[i]);
 			i++;
 		}
 	if (g_print)
@@ -70,7 +70,7 @@ char	*ft_putwidth_hex(char x, int precision, uintmax_t arg, char *result)
 	result = ft_put_precision(result, precision);
 	if (g_fl.pound == 1 && arg != 0)
 		g_fl.width_v = g_fl.width_v - 2;
-	g_fl.width_v = g_fl.width_v - ft_strlen(result);
+	g_fl.width_v = (int)(g_fl.width_v - ft_strlen(result));
 	if (g_fl.pound == 1 && g_fl.zero == 0)
 		result = ft_hex_pound(result, x, arg);
 	while (g_fl.width_v > 0 && g_fl.minus == 0)

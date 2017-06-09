@@ -17,3 +17,9 @@ void	ft_putstr(char const *s)
 	while (*s)
 		ft_putchar(*s++);
 }
+
+void	ft_putstre(char const *s)
+{
+	while (*s)
+		ft_putchare(*s++);
+}

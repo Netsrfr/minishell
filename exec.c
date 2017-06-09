@@ -49,9 +49,11 @@ void	ft_exec(char *line)
 
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
-	argv = ft_strsplit(line, ' ');
-	if (line[0] != '/')
+	argv = ft_split_whitespaces(line);
+//	while(*argv)
+//		printf("ARGV = %s\n", *argv++);
+	if (argv[0][0] != '/')
 		ft_exec_path(argv, environ, cwd);
 	else if (execve(argv[0], argv, environ) == -1)
-		ft_print_error("das shell: error: command not found:", argv[0]);
+		ft_print_error("command not found:", argv[0]);
 }

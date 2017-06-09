@@ -30,7 +30,7 @@ int		ft_strcmd(char *line, char *cmd)
 
 void	ft_print_error(char *error, char *arg)
 {
-	ft_printf("das shell: error: %s %s\n", error, arg);
+	ft_printe("das_shell: %s %s %s\n", CE, error, arg);
 	exit(0);
 }
 

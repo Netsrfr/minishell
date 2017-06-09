@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*   ft_printe.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jpfeffer <jpfeffer@student.42.us.org>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,34 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "ft_printe.h"
 
-void		flag_init(void)
+void		flag_init_e(void)
 {
-	g_fl.error = 0;
-	g_fl.precision = 0;
-	g_fl.precision_v = 0;
-	g_fl.neg = 0;
-	g_fl.count = 0;
-	g_fl.pound = 0;
-	g_fl.zero = 0;
-	g_fl.minus = 0;
-	g_fl.plus = 0;
-	g_fl.space = 0;
-	g_fl.width = 0;
-	g_fl.width_v = 0;
-	g_fl.h = 0;
-	g_fl.hh = 0;
-	g_fl.l = 0;
-	g_fl.ll = 0;
-	g_fl.j = 0;
-	g_fl.z = 0;
+	g_fe.error = 0;
+	g_fe.precision = 0;
+	g_fe.precision_v = 0;
+	g_fe.neg = 0;
+	g_fe.count = 0;
+	g_fe.pound = 0;
+	g_fe.zero = 0;
+	g_fe.minus = 0;
+	g_fe.plus = 0;
+	g_fe.space = 0;
+	g_fe.width = 0;
+	g_fe.width_v = 0;
+	g_fe.h = 0;
+	g_fe.hh = 0;
+	g_fe.l = 0;
+	g_fe.ll = 0;
+	g_fe.j = 0;
+	g_fe.z = 0;
 }
 
-static char	*ft_flags_star(char *progress, va_list arguments)
+static char	*ft_flags_star_e(char *progress, va_list arguments)
 {
-	g_fl.width = 1;
-	g_fl.width_v = va_arg(arguments, int);
+	g_fe.width = 1;
+	g_fe.width_v = va_arg(arguments, int);
 	progress++;
 	return (progress);
 }
@@ -46,35 +46,35 @@ static char	*ft_flags_star(char *progress, va_list arguments)
 ** FLAG JZ Removed!!! Not needed for LS, add if needed.
 */
 
-char		*ft_flags(char *progress, va_list arguments)
+char		*ft_flags_e(char *progress, va_list arguments)
 {
 	while (PR('+') || PR('-') || PR('#') || PR(' ') || PR('h') || PR('l')
 	|| PR('j') || PR('z') || PR('*') || (*progress >= '0' && *progress <= '9'))
 	{
 		if (*progress == '*')
-			progress = ft_flags_star(progress, arguments);
+			progress = ft_flags_star_e(progress, arguments);
 		if (*progress >= '1' && *progress <= '9')
-			progress = ft_flags_width(progress);
+			progress = ft_flags_width_e(progress);
 		if (*progress == '+')
-			progress = ft_flags_plus(progress);
+			progress = ft_flags_plus_e(progress);
 		if (*progress == '-')
-			progress = ft_flags_minus(progress);
+			progress = ft_flags_minus_e(progress);
 		if (*progress == '0')
-			progress = ft_flags_zero(progress);
+			progress = ft_flags_zero_e(progress);
 		if (*progress == '#')
-			progress = ft_flags_pound(progress);
+			progress = ft_flags_pound_e(progress);
 		if (*progress == ' ')
-			progress = ft_flags_space(progress);
+			progress = ft_flags_space_e(progress);
 		if (*progress == 'h')
-			progress = ft_flags_h(progress);
+			progress = ft_flags_h_e(progress);
 		if (*progress == 'l')
-			progress = ft_flags_l(progress);
+			progress = ft_flags_l_e(progress);
 	}
-	progress = ft_flags_precision(progress);
+	progress = ft_flags_precision_e(progress);
 	return (progress);
 }
 
-static int	parser(const char *format, va_list arguments)
+static int	parser_e(const char *format, va_list arguments)
 {
 	char	*fmt_ptr;
 
@@ -83,36 +83,36 @@ static int	parser(const char *format, va_list arguments)
 	{
 		if (*fmt_ptr == '%')
 		{
-			flag_init();
-			fmt_ptr = ft_flags(++fmt_ptr, arguments);
-			fmt_ptr = ft_conversions(arguments, fmt_ptr);
+			flag_init_e();
+			fmt_ptr = ft_flags_e(++fmt_ptr, arguments);
+			fmt_ptr = ft_conversions_e(arguments, fmt_ptr);
 		}
-		if (g_print != NULL)
+		if (g_printe != NULL)
 		{
-			g_return = ft_strlen(g_print) + g_return;
-			ft_putstr(g_print);
-			free(g_print);
-			g_print = 0;
+			g_returne = ft_strlen(g_printe) + g_returne;
+			ft_putstre(g_printe);
+			free(g_printe);
+			g_printe = 0;
 		}
 		while (*fmt_ptr && *fmt_ptr != '%')
 		{
-			ft_putchar(*fmt_ptr++);
-			g_return++;
+			ft_putchare(*fmt_ptr++);
+			g_returne++;
 		}
 	}
 	return (1);
 }
 
-ssize_t		ft_printf(const char *format, ...)
+ssize_t		ft_printe(const char *format, ...)
 {
 	va_list	arguments;
 
-	if (g_fl.error == -1)
+	if (g_fe.error == -1)
 		return (-1);
-	g_return = 0;
+	g_returne = 0;
 	va_start(arguments, format);
-	parser(format, arguments);
+	parser_e(format, arguments);
 	va_end(arguments);
-	free(g_print);
-	return (g_return);
+	free(g_printe);
+	return (g_returne);
 }

@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+//TODO: handle $NAME
+
 void	ft_echo(char *line)
 {
 	char	*ptr;

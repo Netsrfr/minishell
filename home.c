@@ -25,7 +25,7 @@ static char	*ft_path_home(char *line)
 		env++;
 	if ((!*env) || ft_strncmp(*env, "HOME=", 5) != 0)
 	{
-		ft_printf("HOME not set path must be specified\n");
+		ft_printe("HOME not set path must be specified\n");
 		free(line);
 		ft_prompt();
 	}

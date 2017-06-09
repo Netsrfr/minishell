@@ -49,7 +49,7 @@ static void	ft_parse_args(char *line)
 	char **args;
 	char **temp;
 
-	args = ft_strsplit(&line[4], ' ');
+	args = ft_split_whitespaces(&line[4]);
 	if (!(*args))
 		ft_print();
 	while (*args && ft_strchr(*args, '=') != 0)
@@ -71,7 +71,7 @@ void		ft_env_child(char *line)
 		line = ft_strrchr(line, '=');
 		if (!line)
 		{
-			ft_printf("usage: env [name=value...] [cammand] [arguments]");
+			ft_printe("usage: env [name=value...] [cammand] [arguments]");
 			exit(0);
 		}
 		while (*line && *line != ' ')

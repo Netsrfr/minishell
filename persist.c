@@ -25,11 +25,13 @@ void	ft_unsetenv(char *line)
 	if (ft_strcmd(line, "unsetenv") == 0)
 	{
 		line = line + 9;
-		name = ft_strsplit(line, ' ');
+		name = ft_split_whitespaces(line);
 		while (*name)
 		{
 			if (ft_strchr(*name, '=') != 0)
-				ft_printf("error: unsetenv: '%s' invalid argument\n", *name);
+				ft_printe("error: unsetenv: '%s' invalid argument\n", *name);
+			else if (ft_strcmp(*name, "PATH") == 0)
+				setenv("PATH", "(null)", 1);
 			else
 				unsetenv(*name);
 			free(*name);
@@ -53,7 +55,7 @@ void	ft_setenv(char *line)
 			i++;
 		if (i != 2)
 		{
-			ft_printf("usage: setenv [name=value]\n");
+			ft_printe("usage: setenv [name=value]\n");
 			free(env);
 			ft_prompt();
 		}

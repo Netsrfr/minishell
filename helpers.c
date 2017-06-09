@@ -22,7 +22,7 @@ static void	ft_getenv(char *line)
 		line = line + 7;
 		name = ft_strdup(line);
 		if (ft_strchr(name, ' ') != 0)
-			ft_printf("error: getenv: too many arguments\n");
+			ft_printe("error: getenv: too many arguments\n");
 		env = getenv(name);
 		free(name);
 		ft_printf("%s\n", env);
@@ -69,7 +69,7 @@ void		ft_quotes(char *line)
 		}
 		if (d % 2 != 0 || s % 2 != 0)
 		{
-			ft_printf("das_shell: quote must be closed\n");
+			ft_printe("das_shell: quote must be closed\n");
 			free(line);
 			ft_prompt();
 		}

@@ -60,7 +60,6 @@ char				*ft_flags_space(char *progress);
 char				*ft_flags_width(char *progress);
 char				*ft_flags_h(char *progress);
 char				*ft_flags_l(char *progress);
-char				*ft_flags_jz(char *progress);
 char				*ft_flags_precision(char *progress);
 
 char				*ft_conversions(va_list ap, char *progress);
