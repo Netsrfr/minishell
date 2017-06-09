@@ -50,7 +50,6 @@ void	ft_exec(char *line)
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
 	argv = ft_strsplit(line, ' ');
-	printf("argv0 = %s\n", argv[0]);
 	if (line[0] != '/')
 		ft_exec_path(argv, environ, cwd);
 	else if (execve(argv[0], argv, environ) == -1)

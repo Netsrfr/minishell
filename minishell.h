@@ -19,11 +19,10 @@
 #include <stdio.h>
 #include <signal.h>
 
-typedef struct	s_path
-{
-	char	**path;
-	int		size;
-}				t_path;
+/*
+** chdir.c
+*/
+void	ft_chdir(char *line);
 
 /*
 ** environ.c
@@ -43,7 +42,6 @@ void	ft_exec(char *line);
 */
 void	ft_unsetenv(char *line);
 void	ft_setenv(char *line);
-void	ft_chdir(char *line);
 void	ft_exit(char *line);
 void	ft_env(char *line);
 

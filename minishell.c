@@ -22,7 +22,13 @@ void	ft_echo(char *line)
 	if (ft_strcmd(line, "echo") == 0)
 	{
 		line = line + 5;
-		ft_printf("%s\n", line);
+		while(*line)
+		{
+			if (*line != '\'' && *line != '\"')
+				write(1, line, 1);
+			line++;
+		}
+		write(1, "\n", 1);
 		free(ptr);
 		exit(0);
 	}
@@ -65,7 +71,6 @@ char	*ft_path_home(char *line)
 	ptr = ft_memalloc(sizeof(char **));
 	env = ft_environ();
 	*ptr = env;
-	printf("TEST1\n");
 	while (*env && ft_strncmp(*env, "HOME=", 5) != 0)
 		env++;
 	if ((!*env) || ft_strncmp(*env, "HOME=", 5) != 0)
@@ -151,6 +156,33 @@ void	ft_built_ins(char *line)
 	ft_exec(line);
 }
 
+void	ft_quotes(char *line)
+{
+	int	i;
+	int	d;
+	int	s;
+
+	i = 0;
+	d = 0;
+	s = 0;
+	if (ft_strchr(line, '\'') != 0 || ft_strchr(line, '\"') != 0)
+	{
+		while (line[i])
+		{
+			if (line[i] == '\"')
+				d++;
+			if (line[i] == '\'')
+				s++;
+			i++;
+		}
+		if (d % 2 != 0 || s % 2 != 0)
+		{
+			ft_printf("das_shell: quote must be closed\n");
+			free(line);
+			ft_prompt();
+		}
+	}
+}
 void	ft_prompt()
 {
 	char	*line;
@@ -163,6 +195,7 @@ void	ft_prompt()
 		ft_printf("\n");
 		ft_prompt();
 	}
+	ft_quotes(line);
 	line = ft_home(line);
 	ft_preprocessor(line);
 	pid = fork();

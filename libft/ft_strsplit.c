@@ -38,42 +38,62 @@ static int	ft_wordcount(char const *str, char delim)
 	return (words);
 }
 
-static int	ft_wordlength(char const *str, char delim, int i)
+static int	ft_wordlength(char const *str, char delim)
 {
 	int	length;
 
 	length = 0;
-	while (str[i] != delim && str[i])
+	while (*str != delim && *str)
 	{
 		length++;
-		i++;
+		str++;
 	}
 	return (length);
+}
+
+static void	ft_quotes(char const **s, char ***str, int *j, int *k)
+{
+	if (**s == '\"')
+	{
+		(*s)++;
+		while (**s && **s != '\"')
+			(*str)[*j][(*k)++] = *((*s)++);
+		(*s)++;
+	}
+	else if (**s == '\'')
+	{
+		(*s)++;
+		while (**s && **s != '\'')
+			(*str)[*j][(*k)++] = *((*s)++);
+		(*s)++;
+	}
 }
 
 char		**ft_strsplit(char const *s, char c)
 {
 	char	**str;
-	int		i;
 	int		j;
 	int		k;
+	int		wc;
 
-	i = 0;
 	j = 0;
-	i = 0;
-	if (!(str = (char**)ft_memalloc(sizeof(char*) * (ft_wordcount(s, c) + 1))))
+	wc = ft_wordcount(s, c);
+	if (!(str = (char**)ft_memalloc(sizeof(char*) * (wc + 1))))
 		return (0);
-	while (s[i])
+	while (*s)
 	{
-		while (s[i] == c && s[i])
-			i++;
-		if (!(str[j] = ft_strnew(sizeof(char) * ft_wordlength(s, c, i))))
+		while (*s && *s == c)
+			s++;
+		if (!(str[j] = ft_strnew(sizeof(char) * ft_wordlength(s, c))))
 			return (0);
 		k = 0;
-		while (s[i] != c && s[i])
-			str[j][k++] = s[i++];
+		if (*s == '\"' || *s == '\'')
+			ft_quotes(&s, &str, &j, &k);
+		else
+			while (*s && *s != c)
+				str[j][k++] = *(s++);
 		j++;
 	}
-	str[ft_wordcount(s, c)] = 0;
+	str[wc] = 0;
 	return (str);
 }
