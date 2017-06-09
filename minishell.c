@@ -69,7 +69,7 @@ void	ft_prompt(void)
 	ft_prompt();
 }
 
-int	main(int argc, char **argv, char **envp)
+int	main(void)
 {
 	signal(SIGINT, ft_signal);
 	ft_printf("\033[100H");
