@@ -93,5 +93,5 @@ set(SOURCE_FILES minishell.c minishell.h
         libraries/ft_printe/ft_printe.h
         libraries/ft_printe/ft_putwidth_e.c
         libraries/get_next_line/get_next_line.c
-        libraries/get_next_line/get_next_line.h persist.c utility.c environ.c exec.c chdir.c home.c helpers.c libft/ft_split_whitespaces.c)
+        libraries/get_next_line/get_next_line.h persist.c utility.c environ.c exec.c chdir.c home.c helpers.c libft/ft_split_whitespaces.c rick.c)
 add_executable(minishell ${SOURCE_FILES})

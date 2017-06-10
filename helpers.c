@@ -12,40 +12,55 @@
 
 #include "minishell.h"
 
-static void	ft_getenv(char *line)
+static void	ft_getenv(char **argv)
 {
-	char	*name;
 	char	*env;
+	int		i;
 
-	if (ft_strcmd(line, "getenv") == 0)
+	i = 1;
+	if (ft_strcmd(argv[0], "getenv") == 0)
 	{
-		line = line + 7;
-		name = ft_strdup(line);
-		if (ft_strchr(name, ' ') != 0)
-			ft_printe("error: getenv: too many arguments\n");
-		env = getenv(name);
-		free(name);
-		ft_printf("%s\n", env);
+		while (argv[i])
+		{
+			if (!(env = getenv(argv[i])))
+				ft_printe("das_shell: %s getenv: environment variable '%s' "
+								"not found\n", CE, argv[i]);
+			else
+				ft_printf("%s\n", env);
+			i++;
+		}
 		ft_prompt();
 	}
 }
 
-void		ft_preprocessor(char *line)
+void		ft_preprocessor(char **argv)
 {
-	ft_exit(line);
-	ft_env(line);
-	ft_setenv(line);
-	ft_getenv(line);
-	ft_unsetenv(line);
-	ft_chdir(line);
+	ft_exit(argv[0]);
+	ft_env(argv);
+	ft_setenv(argv);
+	ft_getenv(argv);
+	ft_unsetenv(argv);
+	ft_chdir(argv);
 }
 
-void	ft_built_ins(char *line)
+//void		ft_man(char **argv)
+//{
+//	char	*path;
+//	char	*temp;
+//
+//	if (ft_strcmp(argv[0], "man") == 0)
+//	{
+//		temp = ft_strjoin(argv[0], ".1");
+//		path = ft_strjoin("/nfs/2016/")
+//	}
+//}
+
+void		ft_built_ins(char **argv)
 {
-	ft_env_child(line);
-	ft_echo(line);
-	ft_clear(line);
-	ft_exec(line);
+	ft_env_child(argv);
+	ft_echo(argv);
+	ft_clear(argv[0]);
+	ft_exec(argv);
 }
 
 void		ft_quotes(char *line)

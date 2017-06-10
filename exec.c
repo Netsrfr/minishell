@@ -12,7 +12,45 @@
 
 #include "minishell.h"
 
-void	ft_exec_path(char **argv, char **environ, char *cwd)
+static void	ft_s_ixusr(char *argv, char **path)
+{
+	struct stat	stats;
+	char		*temp;
+
+	temp = ft_add_path(*path, argv);
+	while (*path)
+	{
+		lstat(temp, &stats);
+		if (S_ISREG(stats.st_mode) && (!(stats.st_mode & S_IXUSR)))
+			ft_print_error("permission denied:", argv);
+		free(temp);
+		path++;
+		if ((!(*path)))
+			ft_print_error("command not found:", argv);
+		temp = ft_add_path(*path, argv);
+	}
+}
+
+static void	ft_run_path(char **path, char **argv, char **environ)
+{
+	char	**ptr;
+	char	*temp;
+
+	ptr = path;
+	temp = ft_add_path(*path, argv[0]);
+	while (*path)
+	{
+		if (execve(temp, argv, environ) != -1)
+			exit(0);
+		free(temp);
+		path++;
+		if ((!(*path)))
+			ft_s_ixusr(argv[0], ptr);
+		temp = ft_add_path(*path, argv[0]);
+	}
+}
+
+static void	ft_exec_path(char **argv, char **environ, char *cwd)
 {
 	char	**path;
 	char	*temp;
@@ -26,34 +64,47 @@ void	ft_exec_path(char **argv, char **environ, char *cwd)
 		if (!(*environ))
 			ft_print_error("command not found:", argv[0]);
 		path = ft_strsplit(&(*environ)[5], ':');
-		temp = ft_add_path(*path, argv[0]);
-		while (*path)
-		{
-			if (execve(temp, argv, environ) != -1)
-				exit(0);
-			free(temp);
-			path++;
-			if ((!(*path)))
-				ft_print_error("command not found:", argv[0]);
-			temp = ft_add_path(*path, argv[0]);
-		}
+		ft_run_path(path, argv, environ);
 	}
 	exit(0);
 }
 
-void	ft_exec(char *line)
+static void	ft_path_rights(char **argv, char **environ)
+{
+	char		**path;
+	char		*temp;
+	struct stat	stats;
+
+	while (*environ && ft_strncmp(*environ, "PATH=", 5) != 0)
+		environ++;
+	if (!(*environ))
+		ft_print_error("command not found:", argv[0]);
+	path = ft_strsplit(&(*environ)[5], ':');
+	temp = ft_add_path(*path, argv[0]);
+	while (*path)
+	{
+		lstat(temp, &stats);
+		if (S_ISREG(stats.st_mode) && (!(stats.st_mode & S_IXUSR)))
+			ft_print_error("permission denied:", temp);
+		free(temp);
+		path++;
+		if ((!(*path)))
+			ft_print_error("command not found:", argv[0]);
+		temp = ft_add_path(*path, argv[0]);
+	}
+}
+
+void		ft_exec(char **argv)
 {
 	char		*cwd;
 	extern char	**environ;
-	char		**argv;
 
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
-	argv = ft_split_whitespaces(line);
-//	while(*argv)
-//		printf("ARGV = %s\n", *argv++);
-	if (argv[0][0] != '/')
+	if (ft_strncmp(argv[0], "\033", 1) == 0)
+		exit(0);
+	if (*argv[0] != '/')
 		ft_exec_path(argv, environ, cwd);
-	else if (execve(argv[0], argv, environ) == -1)
-		ft_print_error("command not found:", argv[0]);
+	else if (execve(*argv, argv, environ) == -1)
+		ft_path_rights(argv, environ);
 }

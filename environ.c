@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	**ft_environ(void)
+char		**ft_environ(void)
 {
 	extern char	**environ;
 	char		**env;
@@ -31,7 +31,7 @@ char	**ft_environ(void)
 	return (env);
 }
 
-void	ft_free_environ(char **env)
+void		ft_free_array(char **env)
 {
 	char **ptr;
 
@@ -44,42 +44,45 @@ void	ft_free_environ(char **env)
 	free(ptr);
 }
 
-static void	ft_parse_args(char *line)
+static void	ft_parse_args(char **argv)
 {
-	char **args;
 	char **temp;
 
-	args = ft_split_whitespaces(&line[4]);
-	if (!(*args))
+	if (!(argv[1]))
 		ft_print();
-	while (*args && ft_strchr(*args, '=') != 0)
+	argv++;
+	while (*argv && ft_strchr(*argv, '=') != 0)
 	{
-		temp = ft_strsplit(*args, '=');
+		temp = ft_strsplit(*argv, '=');
 		if (temp[2])
-			ft_print_error("env: invalid argument:", *args);
+			ft_print_error("env: invalid argument:", *argv);
 		else
 			setenv(temp[0], temp[1], 1);
-		args++;
+		argv++;
 	}
 }
 
-void		ft_env_child(char *line)
+void		ft_env_child(char **argv)
 {
-	if (ft_strncmp(line, "env ", 4) == 0)
+	if (ft_strcmp(argv[0], "env") == 0)
 	{
-		ft_parse_args(line);
-		line = ft_strrchr(line, '=');
-		if (!line)
-		{
-			ft_printe("usage: env [name=value...] [cammand] [arguments]");
-			exit(0);
-		}
-		while (*line && *line != ' ')
-			line++;
-		if (*line != ' ')
-			ft_print();
-		else
-			line++;
-		ft_exec(line);
+		ft_parse_args(argv);
+		while (*argv && ft_strrchr(*argv, '='))
+			argv++;
+		ft_exec(argv);
 	}
+}
+
+void		ft_env_variable(char *argv)
+{
+	char	*temp;
+	char	**env;
+
+	env = ft_environ();
+	argv++;
+	temp = ft_strdup(argv);
+	while (ft_strncmp(*env, temp, ft_strlen(temp)) != 0)
+		env++;
+	if (ft_strncmp(*env, temp, ft_strlen(temp)) == 0)
+		ft_printf("%s", &((*env)[ft_strlen(temp) + 1]));
 }

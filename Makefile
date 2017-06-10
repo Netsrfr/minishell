@@ -13,7 +13,7 @@
 1SH = minishell
 
 C_FILES = minishell.c utility.c persist.c environ.c exec.c chdir.c home.c \
-helpers.c
+helpers.c rick.c
 
 LIBFT		=	./libft/libft.a
 PRINTF		=	./libraries/ft_printf/libftprintf.a

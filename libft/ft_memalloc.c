@@ -19,7 +19,7 @@ void	*ft_memalloc(size_t size)
 	size_t	i;
 
 	i = 0;
-	if (!(mem = (void*)malloc(size)))
+	if (!(mem = malloc(size)))
 		return (0);
 	buffer = (char*)mem;
 	while (i < size)

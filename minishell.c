@@ -12,31 +12,35 @@
 
 #include "minishell.h"
 
-//TODO: handle $NAME
-
-void	ft_echo(char *line)
+void		ft_echo(char **argv)
 {
-	char	*ptr;
-
-	ptr = line;
-	if (ft_strcmd(line, "echo") == 0)
+	if (ft_strcmp(argv[0], "echo") == 0)
 	{
-		line = line + 5;
-		while (*line)
+		argv++;
+		while (*argv)
 		{
-			if (*line != '\'' && *line != '\"')
-				write(1, line, 1);
-			line++;
+			if (*argv[0] == '$')
+				ft_env_variable(*argv);
+			else
+			{
+				while (**argv)
+				{
+					if (**argv != '\'' && **argv != '\"')
+						write(1, *argv, 1);
+					(*argv)++;
+				}
+			}
+			write(1, " ", 1);
+			argv++;
 		}
 		write(1, "\n", 1);
-		free(ptr);
 		exit(0);
 	}
 }
 
-void	ft_clear(char *line)
+void		ft_clear(char *argv)
 {
-	if (ft_strcmd(line, "clear") == 0 || (ft_strcmd(line, "cls") == 0))
+	if (ft_strcmp(argv, "clear") == 0 || (ft_strcmp(argv, "cls") == 0))
 	{
 		ft_printf("\033[100H");
 		ft_printf("\033[2J");
@@ -44,8 +48,28 @@ void	ft_clear(char *line)
 	}
 }
 
-void	ft_prompt(void)
+static char	**ft_parse_line(char **line)
 {
+	char	**argv;
+	int		i;
+
+	i = 0;
+	argv = NULL;
+	ft_quotes(*line);
+	*line = ft_home(*line);
+	while ((*line)[i] && ((*line)[i] == ' ' || (*line)[i] == '\t'))
+		i++;
+	if (i < (int)ft_strlen(*line))
+		argv = ft_split_whitespaces(*line);
+	free(*line);
+	if (!argv)
+		ft_prompt();
+	return (argv);
+}
+
+void		ft_prompt(void)
+{
+	char	**argv;
 	char	*line;
 	pid_t	pid;
 
@@ -55,26 +79,37 @@ void	ft_prompt(void)
 		ft_printf("\n");
 		ft_prompt();
 	}
-	ft_quotes(line);
-	line = ft_home(line);
-	ft_preprocessor(line);
+	g_line = line;
+	argv = ft_parse_line(&line);
+	g_argv = argv;
+	ft_preprocessor(argv);
 	pid = fork();
 	g_pid = pid;
 	if (pid > 0)
 		wait(&pid);
 	else if (pid == 0)
 	{
-		ft_built_ins(line);
+		ft_built_ins(argv);
 		exit(0);
 	}
-	free(line);
 	ft_prompt();
 }
 
-int	main(void)
+int			main(void)
 {
+	extern char **environ;
+	struct winsize	win;
+	char **env;
+	int i;
+
+	i = 0;
+	env = ft_environ();
+	environ = env;
 	signal(SIGINT, ft_signal);
+	ioctl(0, TIOCGWINSZ, &win);
 	ft_printf("\033[100H");
 	ft_printf("\033[2J");
+	if (win.ws_col >= 140 && win.ws_row >= 27)
+		ft_rick(win);
 	ft_prompt();
 }

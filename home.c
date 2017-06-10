@@ -30,7 +30,7 @@ static char	*ft_path_home(char *line)
 		ft_prompt();
 	}
 	home = ft_strdup(&(*env)[5]);
-	ft_free_environ(*ptr);
+	ft_free_array(*ptr);
 	free(ptr);
 	return (home);
 }
