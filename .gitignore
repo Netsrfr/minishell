@@ -36,3 +36,4 @@ dkms.conf
 /cmake-build-debug/
 .idea
 /test dir
+minishell
