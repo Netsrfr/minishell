@@ -60,7 +60,10 @@ static char	**ft_parse_line(char **line)
 	while ((*line)[i] && ((*line)[i] == ' ' || (*line)[i] == '\t'))
 		i++;
 	if (i < (int)ft_strlen(*line))
+	{
+		*line = ft_strtrim(*line);
 		argv = ft_split_whitespaces(*line);
+	}
 	free(*line);
 	if (!argv)
 		ft_prompt();
@@ -79,9 +82,7 @@ void		ft_prompt(void)
 		ft_printf("\n");
 		ft_prompt();
 	}
-	g_line = line;
 	argv = ft_parse_line(&line);
-	g_argv = argv;
 	ft_preprocessor(argv);
 	pid = fork();
 	g_pid = pid;
@@ -97,12 +98,10 @@ void		ft_prompt(void)
 
 int			main(void)
 {
-	extern char **environ;
+	extern char		**environ;
 	struct winsize	win;
-	char **env;
-	int i;
+	char			**env;
 
-	i = 0;
 	env = ft_environ();
 	environ = env;
 	signal(SIGINT, ft_signal);
@@ -110,6 +109,6 @@ int			main(void)
 	ft_printf("\033[100H");
 	ft_printf("\033[2J");
 	if (win.ws_col >= 140 && win.ws_row >= 27)
-		ft_rick(win);
+		ft_intro(win);
 	ft_prompt();
 }

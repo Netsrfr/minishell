@@ -12,15 +12,70 @@
 
 #include "minishell.h"
 
-void	ft_exit(char *argv)
+void	ft_unsetenv(char *name)
 {
-	if (ft_strcmp(argv, "exit") == 0)
-		exit(0);
+	char		**env;
+	char		*temp;
+	int			i;
+
+	env = ft_environ();
+	i = 0;
+	temp = ft_strjoin(name, "=");
+	while (env[i] && ft_strncmp(temp, env[i], ft_strlen(temp)) != 0)
+		i++;
+	if (env[i] && ft_strncmp(temp, env[i], ft_strlen(temp)) == 0)
+	{
+		while (env[i])
+			i++;
+		ft_unset(i, name);
+	}
+	ft_free_array(env);
+	free(temp);
 }
 
-//TODO: create unsetenv built-in
+void	ft_setenv(char *name, char *value, int cont)
+{
+	extern char	**environ;
+	char		*temp;
+	char		*ev;
+	int			i;
 
-void	ft_unsetenv(char **argv)
+	i = 0;
+	temp = ft_strjoin(name, "=");
+	ev = ft_strjoin(temp, value);
+	while (environ[i] && ft_strncmp(environ[i], temp, ft_strlen(temp)) != 0)
+		i++;
+	if (environ[i] && ft_strncmp(environ[i], temp, ft_strlen(temp)) == 0)
+	{
+		free(environ[i]);
+		environ[i] = ft_strdup(ev);
+	}
+	else
+	{
+		ft_expand_env(ev, i);
+	}
+	free(temp);
+	free(ev);
+	if (cont == 0)
+		ft_prompt();
+}
+
+void	ft_env(char **argv)
+{
+	extern char	**environ;
+	int			i;
+
+	i = 0;
+	if (ft_strcmp(argv[0], "env") == 0 && (!argv[1]))
+	{
+		while (environ[i])
+			ft_printf("%s\n", environ[i++]);
+		ft_free_array(argv);
+		ft_prompt();
+	}
+}
+
+void	ft_parse_unsetenv(char **argv)
 {
 	if (ft_strcmp(argv[0], "unsetenv") == 0)
 	{
@@ -30,9 +85,9 @@ void	ft_unsetenv(char **argv)
 			if (ft_strchr(*argv, '=') != 0)
 				ft_printe("error: unsetenv: '%s' invalid argument\n", *argv);
 			else if (ft_strcmp(*argv, "PATH") == 0)
-				setenv("PATH", "(null)", 1);
+				ft_setenv("PATH", "(null)", 0);
 			else
-				unsetenv(*argv);
+				ft_unsetenv(*argv);
 			free(*argv);
 			argv++;
 		}
@@ -40,56 +95,7 @@ void	ft_unsetenv(char **argv)
 	}
 }
 
-static void ft_expand_env(char *argv, int count)
-{
-	char	**env;
-	char	**temp;
-	int		i;
-	extern char **environ;
-
-
-	ft_printf("count = %d\n", count);
-	i = 0;
-	env = ft_environ();
-	temp = ft_memalloc(sizeof(char *) * count + 2);
-	while (i < count)
-	{
-		temp[i] = ft_strdup(env[i]);
-		free(env[i]);
-		i++;
-	}
-	temp[i] = ft_strdup(argv);
-	ft_free_array(environ);
-
-	environ = temp;
-	free(env);
-}
-
-void	ft_setenviron(char *argv, char *name)
-{
-	extern char	**environ;
-	char		*temp;
-	int i;
-
-	i = 0;
-	temp = ft_strjoin(name, "=");
-	while (environ[i] && ft_strncmp(environ[i], temp, ft_strlen(temp)) != 0)
-		i++;
-	if (environ[i] && ft_strncmp(environ[i], temp, ft_strlen(temp)) == 0)
-	{
-		free(environ[i]);
-		environ[i] = ft_strdup(argv);
-	}
-	else
-	{
-		ft_expand_env(argv, i);
-
-	}
-	free(temp);
-	ft_prompt();
-}
-
-void	ft_setenv(char **argv)
+void	ft_parse_setenv(char **argv)
 {
 	char	**env;
 	int		i;
@@ -111,29 +117,9 @@ void	ft_setenv(char **argv)
 				ft_prompt();
 			}
 			else
-				//setenv(env[0], env[1], 1);
-				ft_setenviron(argv[1], env[0]);
+				ft_setenv(env[0], env[1], 1);
 		}
 		ft_free_array(argv);
-		ft_prompt();
-	}
-}
-
-void	ft_env(char **argv)
-{
-	extern char	**environ;
-	int			i;
-
-	i = 0;
-	if (ft_strcmp(argv[0], "env") == 0 && (!argv[1]))
-	{
-		//ptr = ft_memalloc(sizeof(char**));
-		//*ptr = environ;
-		while (environ[i])
-			ft_printf("%s\n", environ[i++]);
-		ft_free_array(argv);
-		//environ = *ptr;
-		//free(ptr);
 		ft_prompt();
 	}
 }

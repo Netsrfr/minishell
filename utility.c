@@ -12,20 +12,10 @@
 
 #include "minishell.h"
 
-int		ft_strcmd(char *line, char *cmd)
+void	ft_exit(char *argv)
 {
-	char *temp;
-
-	if (ft_strcmp(line, cmd) == 0)
-		return (0);
-	temp = ft_strjoin(cmd, " ");
-	if (ft_strncmp(line, temp, ft_strlen(temp)) == 0)
-	{
-		free(temp);
-		return (0);
-	}
-	free(temp);
-	return (1);
+	if (ft_strcmp(argv, "exit") == 0)
+		exit(0);
 }
 
 void	ft_print_error(char *error, char *arg)

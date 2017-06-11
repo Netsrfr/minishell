@@ -14,8 +14,8 @@
 
 static void	ft_set_pwd(char *cwd)
 {
-	setenv("OLDPWD", cwd, 1);
-	setenv("PWD", getcwd(cwd, PATH_MAX), 1);
+	ft_setenv("OLDPWD", cwd, 1);
+	ft_setenv("PWD", getcwd(cwd, PATH_MAX), 1);
 }
 
 static void	ft_chdir_home(char **argv)
@@ -38,7 +38,7 @@ static void	ft_chdir_home(char **argv)
 		free(cwd);
 	}
 	else
-		ft_print_error("HOME not set path must be specified", "");
+		ft_printe("das_shell: %s HOME not set path must be specified\n", CE);
 	ft_free_array(*ptr);
 	free(ptr);
 	ft_free_array(argv);
@@ -71,8 +71,8 @@ static void	ft_chdir_oldpwd(char **argv)
 	{
 		cwd = ft_memalloc(PATH_MAX);
 		oldpwd = ft_oldpwd();
-		setenv("OLDPWD", getcwd(cwd, PATH_MAX), 1);
-		setenv("PWD", oldpwd, 1);
+		ft_setenv("OLDPWD", getcwd(cwd, PATH_MAX), 1);
+		ft_setenv("PWD", oldpwd, 1);
 		chdir(oldpwd);
 		ft_printf("%s\n", oldpwd);
 		free(oldpwd);
@@ -101,7 +101,8 @@ void		ft_chdir(char **argv)
 			else if (chdir(argv[1]) != -1)
 				ft_set_pwd(cwd);
 			else
-				ft_print_error("cd: no such file or directory:", argv[1]);
+				ft_printe("das_shell: %s cd: no such file or directory: %s\n",
+						CE, argv[1]);
 			free(cwd);
 		}
 		ft_free_array(argv);

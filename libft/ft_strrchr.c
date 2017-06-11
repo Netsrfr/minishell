@@ -17,7 +17,7 @@ char	*ft_strrchr(const char *s, int c)
 	int		i;
 	char	*scast;
 
-	i = ft_strlen(s);
+	i = (int)ft_strlen(s);
 	scast = (char*)s;
 	if (c == 0)
 		return (&scast[ft_strlen(s)]);

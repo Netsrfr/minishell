@@ -57,20 +57,22 @@ static void	ft_parse_args(char **argv)
 		if (temp[2])
 			ft_print_error("env: invalid argument:", *argv);
 		else
-			setenv(temp[0], temp[1], 1);
+			ft_setenv(temp[0], temp[1], 1);
 		argv++;
 	}
 }
 
-void		ft_env_child(char **argv)
+char		**ft_env_child(char **argv)
 {
 	if (ft_strcmp(argv[0], "env") == 0)
 	{
 		ft_parse_args(argv);
+		argv++;
 		while (*argv && ft_strrchr(*argv, '='))
 			argv++;
-		ft_exec(argv);
+		ft_env_child(argv);
 	}
+	return (argv);
 }
 
 void		ft_env_variable(char *argv)

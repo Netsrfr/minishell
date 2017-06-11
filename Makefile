@@ -10,10 +10,10 @@
 #                                                                              #
 #******************************************************************************#
 
-1SH = minishell
+NAME = minishell
 
 C_FILES = minishell.c utility.c persist.c environ.c exec.c chdir.c home.c \
-helpers.c rick.c
+helpers.c intro.c bonus.c
 
 LIBFT		=	./libft/libft.a
 PRINTF		=	./libraries/ft_printf/libftprintf.a
@@ -28,7 +28,7 @@ C_FLAGS = -Wall -Werror -Wextra
 
 .PHONY: all library libft printf printe gnl test testre clean fclean re
 
-all: library $(1SH)
+all: library $(NAME)
 
 library: libft printf printe gnl $(LIBRARY)
 
@@ -56,7 +56,7 @@ gnl: $(GNL)
 $(GNL):
 	@make -C ./libraries/get_next_line
 
-$(1SH): $(C_FILES) minishell.h
+$(NAME): $(C_FILES) minishell.h
 	@gcc $(C_FLAGS) $(LIBLINK) $(SRCS) -o minishell
 
 test: library

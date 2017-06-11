@@ -24,6 +24,14 @@
 # define CE ("\x1b[31merror:\x1b[39m")
 
 /*
+** bonus.c
+*/
+void	ft_unsetpath(char **argv);
+void	ft_setpath(char **argv);
+void	ft_getenv(char **argv);
+void	ft_man(char **argv);
+
+/*
 ** chdir.c
 */
 void	ft_chdir(char **argv);
@@ -33,7 +41,7 @@ void	ft_chdir(char **argv);
 */
 void	ft_free_array(char **env);
 void	ft_env_variable(char *argv);
-void	ft_env_child(char **argv);
+char	**ft_env_child(char **argv);
 char	**ft_environ(void);
 
 /*
@@ -44,6 +52,8 @@ void	ft_exec(char **argv);
 /*
 ** helpers.c
 */
+void	ft_expand_env(char *argv, int count);
+void	ft_unset(int count, char *name);
 void	ft_preprocessor(char **argv);
 void	ft_built_ins(char **argv);
 void	ft_quotes(char *line);
@@ -52,6 +62,11 @@ void	ft_quotes(char *line);
 ** home.c
 */
 char	*ft_home(char *ln);
+
+/*
+** intro.c
+*/
+void	ft_intro(struct winsize win);
 
 /*
 ** minishell.c
@@ -63,26 +78,20 @@ void	ft_prompt(void);
 /*
 ** persist.c
 */
-void	ft_unsetenv(char **argv);
-void	ft_setenv(char **argv);
-void	ft_exit(char *argv);
+void	ft_setenv(char *name, char *value, int cont);
+void	ft_parse_unsetenv(char **argv);
+void	ft_parse_setenv(char **argv);
+void	ft_unsetenv(char *name);
 void	ft_env(char **argv);
-
-/*
-** rick.c
-*/
-void	ft_rick(struct winsize win);
 
 /*
 ** utility.c
 */
 char	*ft_add_path(char *argv0, char *argv1);
 void	ft_print_error(char *error, char *arg);
-int		ft_strcmd(char *line, char *cmd);
+void	ft_exit(char *argv);
 void	ft_signal(int sig);
 void	ft_print(void);
 
 int		g_pid;
-char	*g_line;
-char	**g_argv;
 #endif

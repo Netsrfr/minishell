@@ -58,7 +58,7 @@ void	ft_seg_two(void)
 			"        ,,,,,,,,,,,,,,,,,MMMMMMM,,,,,/                      \n\n");
 }
 
-void	ft_rick(struct winsize win)
+void	ft_intro(struct winsize win)
 {
 	int	i;
 
