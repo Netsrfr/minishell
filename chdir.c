@@ -38,7 +38,8 @@ static void	ft_chdir_home(char **argv)
 		free(cwd);
 	}
 	else
-		ft_printe("das_shell: %s HOME not set path must be specified\n", CE);
+		ft_printe("das_shell: %s cd: HOME not set path must be specified\n",
+				CE);
 	ft_free_array(*ptr);
 	free(ptr);
 	ft_free_array(argv);
@@ -79,7 +80,7 @@ static void	ft_chdir_oldpwd(char **argv)
 		free(cwd);
 	}
 	else
-		ft_printe("das_shell: cd: string not in pwd\n");
+		ft_printe("das_shell: %s cd: string not in pwd\n", CE);
 }
 
 void		ft_chdir(char **argv)
@@ -97,7 +98,7 @@ void		ft_chdir(char **argv)
 			cwd = ft_memalloc(PATH_MAX);
 			cwd = getcwd(cwd, PATH_MAX);
 			if (argv[2])
-				ft_printe("das_shell: cd: too many arguments\n");
+				ft_printe("das_shell: %s cd: too many arguments\n", CE);
 			else if (chdir(argv[1]) != -1)
 				ft_set_pwd(cwd);
 			else

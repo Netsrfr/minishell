@@ -69,35 +69,11 @@ static void	ft_exec_path(char **argv, char **environ, char *cwd)
 	exit(0);
 }
 
-static void	ft_path_rights(char **argv, char **environ)
-{
-	char		**path;
-	char		*temp;
-	struct stat	stats;
-
-	while (*environ && ft_strncmp(*environ, "PATH=", 5) != 0)
-		environ++;
-	if (!(*environ))
-		ft_print_error("command not found:", argv[0]);
-	path = ft_strsplit(&(*environ)[5], ':');
-	temp = ft_add_path(*path, argv[0]);
-	while (*path)
-	{
-		lstat(temp, &stats);
-		if (S_ISREG(stats.st_mode) && (!(stats.st_mode & S_IXUSR)))
-			ft_print_error("permission denied:", temp);
-		free(temp);
-		path++;
-		if ((!(*path)))
-			ft_print_error("command not found:", argv[0]);
-		temp = ft_add_path(*path, argv[0]);
-	}
-}
-
 void		ft_exec(char **argv)
 {
-	char		*cwd;
 	extern char	**environ;
+	struct stat	stats;
+	char		*cwd;
 
 	cwd = malloc(PATH_MAX);
 	getcwd(cwd, PATH_MAX);
@@ -106,5 +82,11 @@ void		ft_exec(char **argv)
 	if (*argv[0] != '/')
 		ft_exec_path(argv, environ, cwd);
 	else if (execve(*argv, argv, environ) == -1)
-		ft_path_rights(argv, environ);
+	{
+		lstat(argv[0], &stats);
+		if (S_ISREG(stats.st_mode) && (!(stats.st_mode & S_IXUSR)))
+			ft_print_error("permission denied:", argv[0]);
+		else
+			ft_print_error("command not found:", argv[0]);
+	}
 }

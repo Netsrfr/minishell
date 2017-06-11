@@ -54,7 +54,7 @@ void	ft_quotes(char *line)
 		}
 		if (d % 2 != 0 || s % 2 != 0)
 		{
-			ft_printe("das_shell: quote must be closed\n");
+			ft_printe("das_shell: %s quote must be closed\n", CE);
 			free(line);
 			ft_prompt();
 		}

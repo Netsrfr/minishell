@@ -65,11 +65,15 @@ void	ft_setpath(char **argv)
 	if (ft_strcmp(argv[0], "setpath") == 0)
 	{
 		if (!argv[1] || argv[2])
-			ft_printe("usage: setpath [value]\n");
+			ft_printe("%s setpath [value]\n", CU);
 		else
 		{
 			if (ft_strchr(argv[1], '=') != 0)
-				ft_printe("provide value only; PATH is implied");
+				ft_printe("das_shell %s input value only; PATH implied\n", CE);
+			else if (ft_strcmp(argv[1], "default") == 0)
+				ft_setenv("PATH", "/bin:/usr/bin", 1);
+			else if (ft_strcmp(argv[1], "defense") == 0)
+				ft_setenv("PATH", "/bin:/usr/bin:/tmp/bin", 1);
 			else
 				ft_setenv("PATH", argv[1], 1);
 		}
@@ -83,9 +87,9 @@ void	ft_unsetpath(char **argv)
 	if (ft_strcmp(argv[0], "unsetpath") == 0)
 	{
 		if (argv[1])
-			ft_printe("usage: unsetpath");
+			ft_printe("%s unsetpath\n", CU);
 		else
-				ft_setenv("PATH", "(null)", 1);
+			ft_setenv("PATH", "(null)", 1);
 		ft_free_array(argv);
 		ft_prompt();
 	}

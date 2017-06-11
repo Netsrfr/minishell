@@ -22,6 +22,7 @@
 # include <sys/stat.h>
 # include <sys/ioctl.h>
 # define CE ("\x1b[31merror:\x1b[39m")
+# define CU ("\x1b[37musage:\x1b[39m")
 
 /*
 ** bonus.c

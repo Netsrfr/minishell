@@ -83,7 +83,8 @@ void	ft_parse_unsetenv(char **argv)
 		while (*argv)
 		{
 			if (ft_strchr(*argv, '=') != 0)
-				ft_printe("error: unsetenv: '%s' invalid argument\n", *argv);
+				ft_printe("das_shell: %s unsetenv: invalid argument: %s\n",
+						CE, *argv);
 			else if (ft_strcmp(*argv, "PATH") == 0)
 				ft_setenv("PATH", "(null)", 0);
 			else
@@ -104,7 +105,7 @@ void	ft_parse_setenv(char **argv)
 	if (ft_strcmp(argv[0], "setenv") == 0)
 	{
 		if (!argv[1] || argv[2])
-			ft_printe("usage: setenv [name=value]\n");
+			ft_printe("%s setenv [name=value]\n", CU);
 		else
 		{
 			env = ft_strsplit(argv[1], '=');
@@ -112,7 +113,7 @@ void	ft_parse_setenv(char **argv)
 				i++;
 			if (i != 2)
 			{
-				ft_printe("usage: setenv [name=value]\n");
+				ft_printe("%s setenv [name=value]\n", CU);
 				ft_free_array(argv);
 				ft_prompt();
 			}
